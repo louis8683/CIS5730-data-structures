@@ -13,9 +13,9 @@ public class Counter {
 	 * You should take advantage of the Set structure and remove any
 	 * unnecessary code!
 	 */
-	public static List<String> getWords(String filename) {
+	public static HashSet<String> getWords(String filename) {
 		
-		List<String> allWords = new ArrayList<>();
+		HashSet<String> allWords = new HashSet<>();
 		
 		try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
 			String line;
@@ -52,9 +52,8 @@ public class Counter {
 	 * instead of an array of Lists. The Map key should be the bigram, and the 
 	 * value should be the number of occurrences.
 	 */
-	public static List[] countBigrams(String filename) {
-		LinkedList<String> bigrams = new LinkedList<>();
-		LinkedList<Integer> count = new LinkedList<>();
+	public static HashMap<String, Integer> countBigrams(String filename) {
+		HashMap<String, Integer> map = new HashMap<>();
 		
 		try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
 			String line;
@@ -67,22 +66,18 @@ public class Counter {
 						char c1 = word.charAt(i+1);
 						if (c0 >= 'a' && c0 <= 'z' && c1 >= 'a' && c1 <= 'z') {
 							String bigram = Character.toString(c0) + Character.toString(c1);
-							int index = bigrams.indexOf(bigram);
-							if (index == -1) {
-								bigrams.add(bigram);
-								count.add(1);
+							if (map.containsKey(bigram)) {
+								map.put(bigram, map.get(bigram) + 1);
 							}
 							else {
-								count.set(index, count.get(index) + 1);
+								map.put(bigram, 1);
 							}
 						}
 					}
 				}				
 			}
-			LinkedList[] result = new LinkedList[2];
-			result[0] = bigrams;
-			result[1] = count;
-			return result;
+
+			return map;
 			
 		}
 		catch (Exception e) {
@@ -105,9 +100,9 @@ public class Counter {
 	 * index #1 of the array should hold the number of occurrences of 'b',
 	 * and so on.
 	 */
-	public static Map<Character, Integer> countLetters(String filename) {
+	public static int[] countLetters(String filename) {
 		
-		Map<Character, Integer> letterCount = new HashMap<>();
+		int[] occurrences = new int[26];
 		
 		try (BufferedReader in = new BufferedReader(new FileReader(filename))) {
 			String line;
@@ -116,18 +111,12 @@ public class Counter {
 				for (String word : words) {
 					for (char c : word.toCharArray()) {
 						if (c >= 'a' && c <= 'z') {
-							if (letterCount.containsKey(c) == false) {
-								letterCount.put(c, 1);
-							}
-							else {
-								int count = letterCount.get(c);
-								letterCount.put(c, count + 1);
-							}
+							occurrences[c - 'a']++;
 						}
 					}
 				}
 			}
-			return letterCount;
+			return occurrences;
 			
 		}
 		catch (Exception e) {
@@ -157,10 +146,10 @@ public class Counter {
 		 */
 		
 		/* comment out the following line after changing the method */ 
-		List<String> words = getWords(filename);
+//		List<String> words = getWords(filename);
 		
 		/* then uncomment the following line */
-		//Set<String> words = getWords(filename);
+		Set<String> words = getWords(filename);
 		
 		/* DO NOT CHANGE THE FOLLOWING TEST CODE */
 		if (words == null) {
@@ -182,14 +171,14 @@ public class Counter {
 		 */
 
 		/* comment out the following three lines after changing the method */
-		List[] bigramCount = countBigrams(filename);
-		int numBigrams = bigramCount[0].size(); 
-		int countAL = (Integer)(bigramCount[1].get(bigramCount[0].indexOf("al"))); 
+//		List[] bigramCount = countBigrams(filename);
+//		int numBigrams = bigramCount[0].size();
+//		int countAL = (Integer)(bigramCount[1].get(bigramCount[0].indexOf("al")));
 		
 		/* then uncomment the following three lines */
-		//Map<String, Integer> bigramCount = countBigrams(filename);
-		//int numBigrams = bigramCount.size();
-		//int countAL = bigramCount.get("al");
+		Map<String, Integer> bigramCount = countBigrams(filename);
+		int numBigrams = bigramCount.size();
+		int countAL = bigramCount.get("al");
 		
 		/* DO NOT CHANGE THE FOLLOWING TEST CODE */
 		if (numBigrams != 375) {
@@ -209,12 +198,12 @@ public class Counter {
 		 */
 
 		/* comment out the following two lines after changing the method */
-		Map<Character, Integer> count = countLetters(filename);
-		int countE = count.get('e');
+//		Map<Character, Integer> count = countLetters(filename);
+//		int countE = count.get('e');
 		
 		/* then uncomment the following two lines */
-		//int[] count = countLetters(filename);
-		//int countE = count[4];
+		int[] count = countLetters(filename);
+		int countE = count[4];
 
 		/* DO NOT CHANGE THE FOLLOWING TEST CODE */
 		if (countE != 13518) {
